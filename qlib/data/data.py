@@ -15,7 +15,13 @@ import importlib
 import traceback
 import numpy as np
 import pandas as pd
-from multiprocessing import Pool
+
+# Faster parallel Python without Python multiprocessing, we can use ray fix spawn.
+# until now, just a test demo with ray.
+try:
+    from ray.util.multiprocessing import Pool
+except ImportError:
+    from multiprocessing import Pool
 
 from .cache import H
 from ..config import C

@@ -284,10 +284,33 @@ class QlibConfig(Config):
             # check redis
             if not can_use_cache():
                 logger.warning(
-                    f"redis connection failed(host={self['redis_host']} port={self['redis_port']}), cache will not be used!"
+                    f"redis connection failed(host={self['redis_host']} port={self['redis_port']} password={self['redis_password']}), cache will not be used!"
                 )
                 self["expression_cache"] = None
                 self["dataset_cache"] = None
+
+        if self["ray_address"] is not None:
+            # need fix cache with ray
+            self["expression_cache"] = None
+            self["dataset_cache"] = None
+            try:
+                import ray
+
+                if not ray.is_initialized():
+                    ray.init(address=self["ray_address"], _redis_password=self["redis_password"])
+                    logger.info("ray is already initialized")
+            except:
+                ray_useage = """
+                https://docs.ray.io/en/master/configure.html
+
+                .. code-block:: python
+                    qlib.init(provider_uri='~/.qlib/qlib_data/cn_data', ray_address='auto', redis_password='redis password')
+
+                .. code-block:: shell
+                    ray start --head --redis-password=your redis password
+                """
+                logger.info(ray_useage)
+
 
     def register(self):
         from .utils import init_instance_by_config

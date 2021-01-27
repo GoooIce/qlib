@@ -35,7 +35,7 @@ log = get_module_logger("utils")
 #################### Server ####################
 def get_redis_connection():
     """get redis connection instance."""
-    return redis.StrictRedis(host=C.redis_host, port=C.redis_port, db=C.redis_task_db)
+    return redis.StrictRedis(host=C.redis_host, port=C.redis_port, password=C.redis_password,db=C.redis_task_db)
 
 
 #################### Data ####################
